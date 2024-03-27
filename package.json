@@ -1,0 +1,19 @@
+{
+  "name": "be-los",
+  "version": "1.0.0",
+  "description": "Backend for LOS Prediction",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/muh-arga/be-los.git"
+  },
+  "author": "Arga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/muh-arga/be-los/issues"
+  },
+  "homepage": "https://github.com/muh-arga/be-los#readme"
+}
