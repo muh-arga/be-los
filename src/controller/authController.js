@@ -34,9 +34,13 @@ module.exports = {
             role: user.role,
             name: user.name,
           };
+          
           const accessToken = jwt.sign(
             payload,
-            process.env.ACCESS_TOKEN_SECRET
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+              expiresIn: "30m",
+            }
           );
           return res.status(200).json({ accessToken });
         } else {
