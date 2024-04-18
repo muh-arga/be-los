@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `los` MODIFY `endDate` DATETIME(3) NULL,
+    MODIFY `estimate` INTEGER NULL,
+    MODIFY `room` VARCHAR(191) NULL,
+    MODIFY `bed` VARCHAR(191) NULL;

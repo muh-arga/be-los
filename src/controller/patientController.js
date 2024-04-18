@@ -87,7 +87,9 @@ module.exports = {
 
   getAll: async (req, res) => {
     try {
-      const patients = await db.patient.findMany();
+      const patients = await db.patient.findMany({
+        orderBy: { createdAt: "desc" },
+      });
       return res
         .status(200)
         .json({ message: "Success get patient", data: patients });
@@ -100,6 +102,14 @@ module.exports = {
     try {
       const patient = await db.patient.findUnique({
         where: { id: req.params.id },
+        include: {
+          los: {
+            orderBy: { createdAt: "desc" },
+            include: {
+              bed: true,
+            },
+          },
+        },
       });
 
       if (!patient) {

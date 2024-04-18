@@ -21,6 +21,8 @@ model User {
   role      String   @default("user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  los Los[]
 }
 
 model Patient {
@@ -33,4 +35,52 @@ model Patient {
   address    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  los Los[]
+}
+
+model Los {
+  id               String    @id @default(uuid())
+  patientId        String
+  staffId          String?
+  bedId            String?
+  age              Int?
+  startDate        DateTime
+  endDate          DateTime?
+  estimate         Int?
+  actual           Int?
+  numProcEvents    Float
+  numNotes         Float
+  numLabs          Float
+  numCharEvents    Float
+  numDiagnosis     Float
+  totalNumInteract Float
+  numProcs         Float
+  numCallouts      Float
+  numMicroLabs     Float
+  numInput         Float
+  numOutput        Float
+  numCPevents      Float
+  numTransfers     Float
+  numRX            Float
+  status           Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  staff   User?   @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  bed     Bed?    @relation(fields: [bedId], references: [id], onDelete: SetNull)
+}
+
+model Bed {
+  id        String   @id @default(uuid())
+  room      String
+  bed       String
+  status    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([room, bed])
+
+  los Los[]
 }

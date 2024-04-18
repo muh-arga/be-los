@@ -34,7 +34,7 @@ module.exports = {
             role: user.role,
             name: user.name,
           };
-          
+
           const accessToken = jwt.sign(
             payload,
             process.env.ACCESS_TOKEN_SECRET,

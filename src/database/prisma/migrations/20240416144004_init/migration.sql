@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `los` ADD COLUMN `age` INTEGER NULL;
