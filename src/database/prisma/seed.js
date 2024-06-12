@@ -16,7 +16,28 @@ async function main() {
       name: "Admin",
       email: "admin@gmail.com",
       password: hash("admin"),
+      address: "Jl. Admin",
+      nip: "1234567890",
+      phone: "081234567890",
+      gender: "Laki-Laki",
+      status: 1,
       role: "admin",
+    },
+  });
+
+  const user = await prisma.user.upsert({
+    where: { email: "user@gmail.com" },
+    update: {},
+    create: {
+      name: "User",
+      email: "user@gmail.com",
+      password: hash("user"),
+      address: "Jl. User",
+      nip: "1234567892",
+      phone: "081234567890",
+      gender: "Laki-Laki",
+      status: 1,
+      role: "user",
     },
   });
 
@@ -48,6 +69,7 @@ async function main() {
   }
 
   console.log(`created admin with id ${admin.id}`);
+  console.log(`created user with id ${user.id}`);
   console.log(`Seeding finished`);
 }
 

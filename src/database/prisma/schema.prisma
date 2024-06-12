@@ -18,6 +18,11 @@ model User {
   email     String   @unique
   name      String?
   password  String
+  address   String?
+  nip       String?  @unique
+  gender    String?
+  phone     String?
+  status    Int      @default(0)
   role      String   @default("user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -49,20 +54,19 @@ model Los {
   endDate          DateTime?
   estimate         Int?
   actual           Int?
-  numProcEvents    Float
-  numNotes         Float
-  numLabs          Float
-  numCharEvents    Float
-  numDiagnosis     Float
-  totalNumInteract Float
-  numProcs         Float
-  numCallouts      Float
-  numMicroLabs     Float
-  numInput         Float
-  numOutput        Float
-  numCPevents      Float
-  numTransfers     Float
-  numRX            Float
+  NumTransfers     Float
+  NumDiagnosis     Float
+  NumNotes         Float
+  NumLabs          Float
+  TotalNumInteract Float
+  NumChartEvents   Float
+  NumProcs         Float
+  NumMicroLabs     Float
+  NumInput         Float
+  NumRx            Float
+  NumOutput        Float
+  NumCPTevents     Float
+  NumCallouts      Float
   status           Int       @default(0)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
@@ -80,7 +84,7 @@ model Bed {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([room, bed])
-
   los Los[]
+
+  @@unique([room, bed])
 }

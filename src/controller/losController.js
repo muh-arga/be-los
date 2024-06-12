@@ -1,6 +1,7 @@
 const db = require("../database/prisma/index");
 const joi = require("joi");
 const moment = require("moment");
+const axios = require("axios");
 
 module.exports = {
   addLos: async (req, res) => {
@@ -8,20 +9,19 @@ module.exports = {
       const validate = (data) => {
         const schema = joi.object({
           patientId: joi.string().required(),
-          numProcEvents: joi.number().required(),
-          numNotes: joi.number().required(),
-          numLabs: joi.number().required(),
-          numCharEvents: joi.number().required(),
-          numDiagnosis: joi.number().required(),
-          totalNumInteract: joi.number().required(),
-          numProcs: joi.number().required(),
-          numCallouts: joi.number().required(),
-          numMicroLabs: joi.number().required(),
-          numInput: joi.number().required(),
-          numOutput: joi.number().required(),
-          numCPevents: joi.number().required(),
-          numTransfers: joi.number().required(),
-          numRX: joi.number().required(),
+          NumTransfers: joi.number().required(),
+          NumDiagnosis: joi.number().required(),
+          NumNotes: joi.number().required(),
+          NumLabs: joi.number().required(),
+          TotalNumInteract: joi.number().required(),
+          NumChartEvents: joi.number().required(),
+          NumProcs: joi.number().required(),
+          NumMicroLabs: joi.number().required(),
+          NumInput: joi.number().required(),
+          NumRx: joi.number().required(),
+          NumOutput: joi.number().required(),
+          NumCPTevents: joi.number().required(),
+          NumCallouts: joi.number().required(),
           bedId: joi.string().optional(),
           estimate: joi.number().optional(),
         });
@@ -50,20 +50,19 @@ module.exports = {
           staffId: req.user.id,
           age: age,
           startDate: new Date(),
-          numProcEvents: req.body.numProcEvents,
-          numNotes: req.body.numNotes,
-          numLabs: req.body.numLabs,
-          numCharEvents: req.body.numCharEvents,
-          numDiagnosis: req.body.numDiagnosis,
-          totalNumInteract: req.body.totalNumInteract,
-          numProcs: req.body.numProcs,
-          numCallouts: req.body.numCallouts,
-          numMicroLabs: req.body.numMicroLabs,
-          numInput: req.body.numInput,
-          numOutput: req.body.numOutput,
-          numCPevents: req.body.numCPevents,
-          numTransfers: req.body.numTransfers,
-          numRX: req.body.numRX,
+          NumTransfers: req.body.NumTransfers,
+          NumDiagnosis: req.body.NumDiagnosis,
+          NumNotes: req.body.NumNotes,
+          NumLabs: req.body.NumLabs,
+          TotalNumInteract: req.body.TotalNumInteract,
+          NumChartEvents: req.body.NumChartEvents,
+          NumProcs: req.body.NumProcs,
+          NumMicroLabs: req.body.NumMicroLabs,
+          NumInput: req.body.NumInput,
+          NumRx: req.body.NumRx,
+          NumOutput: req.body.NumOutput,
+          NumCPTevents: req.body.NumCPTevents,
+          NumCallouts: req.body.NumCallouts,
           bedId: req.body.bedId,
           estimate: req.body.estimate,
         },
@@ -165,6 +164,74 @@ module.exports = {
       } else {
         return res.status(200).json({ data: los });
       }
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  predict: async (req, res) => {
+    try {
+      const validate = (data) => {
+        const schema = joi.object({
+          patientId: joi.string().required(),
+          NumTransfers: joi.number().required(),
+          NumDiagnosis: joi.number().required(),
+          NumNotes: joi.number().required(),
+          NumLabs: joi.number().required(),
+          TotalNumInteract: joi.number().required(),
+          NumChartEvents: joi.number().required(),
+          NumProcs: joi.number().required(),
+          NumMicroLabs: joi.number().required(),
+          NumInput: joi.number().required(),
+          NumRx: joi.number().required(),
+          NumOutput: joi.number().required(),
+          NumCPTevents: joi.number().required(),
+          NumCallouts: joi.number().required(),
+        });
+        return schema.validate(data);
+      };
+
+      const { error, value } = validate(req.body);
+
+      if (error) {
+        let message = error.details[0].message.split('"');
+        message = message[1] + message[2];
+        return res.status(400).json({ message });
+      }
+
+      const patient = await db.patient.findUnique({
+        where: {
+          id: req.body.patientId,
+        },
+      });
+
+      const age = moment().diff(patient.birthDate, "years");
+
+      axios
+        .post("http://127.0.0.1:5000/predict", {
+          input: [
+            req.body.NumTransfers,
+            req.body.NumDiagnosis,
+            req.body.NumNotes,
+            req.body.NumLabs,
+            req.body.TotalNumInteract,
+            req.body.NumChartEvents,
+            req.body.NumProcs,
+            req.body.NumMicroLabs,
+            req.body.NumInput,
+            req.body.NumRx,
+            req.body.NumOutput,
+            age,
+            req.body.NumCPTevents,
+            req.body.NumCallouts,
+          ],
+        })
+        .then((response) => {
+          return res.status(200).json({ data: response.data });
+        })
+        .catch((error) => {
+          return res.status(500).json({ message: error.message });
+        });
     } catch (error) {
       return res.status(500).json({ message: error.message });
     }
